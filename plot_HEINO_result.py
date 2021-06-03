@@ -31,6 +31,8 @@ sediment_area = np.logical_or(hudson_bay, hudson_strait)
 
 parser = argparse.ArgumentParser(description='Generate model setup files')
 parser.add_argument('ncfile')
+parser.add_argument('--full', action="store_true",
+                    help="plot full time, not only last 50ka")
 args = parser.parse_args()
 
 root_grp = Dataset(args.ncfile, "r")
@@ -51,7 +53,16 @@ for i in range(thk.shape[0]):
 # thk_mean = np.mean(thk_masked, axis=-1)
 
 # plt.imshow(thk_masked[-1,:,:])
+
+if not args.full:
+    time_ka = time_ka[150:]
+    thk_mean = thk_mean[150:]
+
+
 plt.plot(time_ka, thk_mean)
 plt.xlabel("time (ka)")
 plt.ylabel("mean ice thickness over sediment area (m)")
 plt.show()
+
+plt.tight_layout()
+plt.savefig(args.ncfile + ".png", dpi=300)
